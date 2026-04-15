@@ -23,20 +23,20 @@ from models import db, MissingPerson, FoundPerson, Alert, Admin, Contact
 FACE_DETECTION_AVAILABLE = True  # Assume available, will fail gracefully if not
 
 # Pre-load DeepFace model to avoid auto-reload issues
-print("🔄 Initializing DeepFace...")
+print("[*] Initializing DeepFace...")
 DEEPFACE_AVAILABLE = False
 try:
     from deepface import DeepFace
     DEEPFACE_AVAILABLE = True
-    print("✓ DeepFace loaded successfully")
-    print("  Note: FaceNet512 model will download on first use (~90MB)")
+    print("[OK] DeepFace loaded successfully")
+    print("     Note: FaceNet512 model will download on first use (~90MB)")
 except ImportError as e:
-    print("⚠️  DeepFace not available - Face recognition disabled")
-    print(f"   Error: {e}")
-    print("   Run: pip install deepface tensorflow")
+    print("[!] DeepFace not available - Face recognition disabled")
+    print(f"    Error: {e}")
+    print("    Run: pip install deepface tensorflow")
 except Exception as e:
-    print(f"⚠️  DeepFace initialization warning: {e}")
-    print("   Face recognition may still work on first use")
+    print(f"[!] DeepFace initialization warning: {e}")
+    print("    Face recognition may still work on first use")
 
 app = Flask(__name__)
 app.secret_key = 'anveshan_secret_key_2023'  
@@ -62,7 +62,7 @@ EMAIL_CONFIG = {
 
 # Check email configuration at startup
 if EMAIL_CONFIG['EMAIL_ADDRESS'].startswith('your_') or EMAIL_CONFIG['EMAIL_PASSWORD'].startswith('your_'):
-    print("\n⚠️  EMAIL CONFIGURATION REQUIRED")
+    print("\n[!] EMAIL CONFIGURATION REQUIRED")
     print("=" * 60)
     print("Email notifications are DISABLED because credentials are not set.")
     print("\nTo enable email alerts when face matches are found:")
@@ -196,9 +196,9 @@ def validate_human_face(image_path):
                             # Verify face quality
                             face_data = faces[0]
                             confidence = face_data.get('confidence', 0)
-                            print(f"   ✓ Face detected using {backend}")
-                            print(f"   ✓ Confidence: {confidence:.2%}")
-                            print(f"   ✓ Total faces found: {len(faces)}")
+                            print(f"   [OK] Face detected using {backend}")
+                            print(f"   [OK] Confidence: {confidence:.2%}")
+                            print(f"   [OK] Total faces found: {len(faces)}")
                             
                             # Accept if confidence is reasonable
                             if confidence > 0.5 or backend == 'mtcnn':
@@ -207,13 +207,13 @@ def validate_human_face(image_path):
                     except ValueError:
                         continue
                     except Exception as e:
-                        print(f"   ⚠ {backend} failed: {str(e)[:50]}")
+                        print(f"   [!] {backend} failed: {str(e)[:50]}")
                         continue
                 
                 print("   ✗ No faces detected by DeepFace")
                         
             except Exception as e:
-                print(f"   ⚠ DeepFace error: {str(e)[:100]}")
+                print(f"   [!] DeepFace error: {str(e)[:100]}")
         
         # LAYER 2: OpenCV Haar Cascade (Multiple Attempts)
         print("\n🔍 LAYER 2: OpenCV Cascade Detection")
@@ -247,8 +247,8 @@ def validate_human_face(image_path):
                     image_area = width * height
                     face_percentage = (face_area / image_area) * 100
                     
-                    print(f"   ✓ Face detected: {w}x{h} pixels")
-                    print(f"   ✓ Face area: {face_percentage:.1f}% of image")
+                    print(f"   [OK] Face detected: {w}x{h} pixels")
+                    print(f"   [OK] Face area: {face_percentage:.1f}% of image")
                     
                     if face_percentage >= 1:  # Face should be at least 1% of image
                         print(f"\n✅ VALIDATION PASSED - Face detected by OpenCV")
@@ -257,14 +257,14 @@ def validate_human_face(image_path):
         print("   ✗ No faces detected by OpenCV")
         
         # LAYER 3: Final Check - Eye Detection (for profile faces)
-        print("\n👁️ LAYER 3: Eye Detection (Profile Check)")
+        print("\n[*] LAYER 3: Eye Detection (Profile Check)")
         eye_cascade_path = cv2.data.haarcascades + 'haarcascade_eye.xml'
         eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
         
         if not eye_cascade.empty():
             eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(15, 15))
             if len(eyes) >= 1:  # At least one eye visible
-                print(f"   ✓ {len(eyes)} eye(s) detected - likely a human face")
+                print(f"   [OK] {len(eyes)} eye(s) detected - likely a human face")
                 print(f"\n✅ VALIDATION PASSED - Human features detected")
                 return True, "Valid human face detected"
             print("   ✗ No eyes detected")
@@ -660,7 +660,7 @@ def notify_match_found(missing_person, found_person, confidence):
         send_email_notification(reporter_email, subject, email_body)
         print(f"📧 Email notification sent to {reporter_email}")
     else:
-        print(f"⚠️ No email address for reporter: {reporter_name}")
+        print(f"[!] No email address for reporter: {reporter_name}")
 
 
 def run_face_matching(image_path, embeddings_file='embeddings_deepface.json', threshold=0.60):
@@ -764,7 +764,7 @@ def init_db():
                 role='super_admin'
             )
             db.session.add(admin)
-            print("✓ Default admin user created: admin/admin123")
+            print("[OK] Default admin user created: admin/admin123")
         
         # Create geet admin user if not exists
         geet = Admin.query.filter_by(username='geet').first()
@@ -777,7 +777,7 @@ def init_db():
                 role='admin'
             )
             db.session.add(geet)
-            print("✓ Admin user 'geet' created: geet/geet1234")
+            print("[OK] Admin user 'geet' created: geet/geet1234")
         
         db.session.commit()
 
@@ -1275,8 +1275,9 @@ def admin_all_found():
     status_filter = request.args.get('status', 'all')
     search_query = request.args.get('search', '')
     
-    # Build query
-    query = FoundPerson.query
+    # Build query with eager loading of relationship
+    from sqlalchemy.orm import joinedload
+    query = FoundPerson.query.options(joinedload(FoundPerson.related_missing_person))
     
     if status_filter != 'all':
         query = query.filter_by(match_status=status_filter)
@@ -1400,6 +1401,69 @@ def delete_found_person(found_id):
         
     except Exception as e:
         logger.error(f"Error deleting found person: {e}")
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/api/admin/found/<int:found_id>', methods=['GET'])
+def get_found_person_details(found_id):
+    """Get detailed information about a found person"""
+    if not session.get('admin'):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        found = FoundPerson.query.get(found_id)
+        if not found:
+            return jsonify({'success': False, 'message': 'Found person not found'}), 404
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'id': found.id,
+                'photo_paths': found.photo_paths.split(',') if found.photo_paths else [],
+                'finder_name': found.finder_name,
+                'finder_phone': found.finder_phone,
+                'finder_email': found.finder_email or '',
+                'approx_age': found.approx_age or 'N/A',
+                'approx_gender': (found.approx_gender or 'Unknown').title(),
+                'physical_description': found.physical_description or 'No description provided',
+                'found_location': found.found_location,
+                'found_date': found.found_date.strftime('%B %d, %Y') if found.found_date else 'N/A',
+                'found_time': found.found_time.strftime('%H:%M') if found.found_time else 'N/A',
+                'found_condition': found.found_condition or 'No additional notes',
+                'match_status': found.match_status,
+                'created_at': found.created_at.strftime('%B %d, %Y %H:%M') if found.created_at else 'N/A'
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error fetching found person details: {e}")
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/api/admin/found/<int:found_id>/mark-resolved', methods=['POST'])
+def mark_found_person_resolved(found_id):
+    """Mark a found person report as resolved"""
+    if not session.get('admin'):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        found = FoundPerson.query.get(found_id)
+        if not found:
+            return jsonify({'success': False, 'message': 'Found person not found'}), 404
+        
+        # Mark as resolved by setting match_status to 'resolved'
+        found.match_status = 'resolved'
+        found.verified_at = datetime.utcnow()
+        db.session.commit()
+        
+        logger.info(f"[OK] Found person #{found.id} marked as resolved by admin")
+        
+        return jsonify({
+            'success': True,
+            'message': f'Report marked as resolved successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error marking found person as resolved: {e}")
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 # API endpoints
@@ -1743,7 +1807,7 @@ def api_face_search():
                 }
                 print(f"📍 Using GPS location from browser: {photo_location}")
             except ValueError:
-                print(f"⚠️ Invalid GPS coordinates received: {gps_latitude}, {gps_longitude}")
+                print(f"[!] Invalid GPS coordinates received: {gps_latitude}, {gps_longitude}")
         
         print(f"\n🔍 Searching against database missing persons...")
         
@@ -1781,7 +1845,7 @@ def api_face_search():
                     'found_location': photo_location
                 })
                 
-                print(f"✓ MATCH FOUND: {person.full_name}")
+                print(f"[MATCH] MATCH FOUND: {person.full_name}")
                 print(f"  Confidence: {match_result['confidence']:.1f}%")
                 print(f"  Similarity: {match_result['similarity']:.4f}")
                 if photo_location:
@@ -2102,7 +2166,7 @@ def delete_case(case_id):
         db.session.delete(case)
         db.session.commit()
         
-        print(f"✓ Deleted case: {case_name} (ID: {case_id})")
+        print(f"[OK] Deleted case: {case_name} (ID: {case_id})")
         
         return jsonify({
             'success': True,
@@ -2130,7 +2194,7 @@ def resolve_case_api(case_id):
         case.updated_at = datetime.now()
         db.session.commit()
         
-        print(f"✓ Marked case as resolved: {case.full_name} (ID: {case_id})")
+        print(f"[OK] Marked case as resolved: {case.full_name} (ID: {case_id})")
         
         return jsonify({
             'success': True,
@@ -2145,10 +2209,10 @@ def resolve_case_api(case_id):
 if __name__ == '__main__':
     # Initialize database
     init_db()
-    print("✓ Database initialized")
-    print("✓ Server starting...")
-    print("✓ Admin credentials: admin / admin123")
-    print("\n💡 TIP: Face search may take 10-20 seconds on first use (loading AI model)")
+    print("[OK] Database initialized")
+    print("[OK] Server starting...")
+    print("[OK] Admin credentials: admin / admin123")
+    print("\n[TIP] Face search may take 10-20 seconds on first use (loading AI model)")
     print("         Subsequent searches will be faster!\n")
     # Use threaded=True to handle concurrent requests better
     # use_reloader=True allows auto-reload but may restart during first TensorFlow load

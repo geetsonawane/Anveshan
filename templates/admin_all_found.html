@@ -491,6 +491,213 @@
         box-shadow: 0 6px 20px rgba(235, 51, 73, 0.4);
     }
     
+    /* Edit Button */
+    .btn-edit {
+        background: #f3e5f5;
+        color: #6a1b9a;
+        border: 1px solid #ce93d8;
+    }
+    
+    .btn-edit:hover {
+        background: #6a1b9a;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(106, 27, 154, 0.4);
+    }
+    
+    /* Resolved Button */
+    .btn-resolved {
+        background: #e0f2f1;
+        color: #004d40;
+        border: 1px solid #80cbc4;
+    }
+    
+    .btn-resolved:hover {
+        background: #004d40;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 77, 64, 0.4);
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        max-width: 700px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-strong);
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    .modal-header {
+        padding: 2rem;
+        background: var(--gradient-primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+    }
+    
+    .modal-close:hover {
+        transform: scale(1.2);
+    }
+    
+    .modal-body {
+        padding: 2rem;
+    }
+    
+    .detail-section {
+        margin-bottom: 2rem;
+    }
+    
+    .detail-section h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #667eea;
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .detail-row {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .detail-label i {
+        color: #667eea;
+        width: 18px;
+    }
+    
+    .detail-value {
+        color: #2d3748;
+        word-break: break-word;
+    }
+    
+    .detail-photo {
+        width: 200px;
+        height: 200px;
+        border-radius: var(--border-radius-md);
+        object-fit: cover;
+        border: 3px solid #667eea;
+        margin-bottom: 1rem;
+    }
+    
+    .no-photo-modal {
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, #e3e8f3 0%, #d0dae8 100%);
+        border-radius: var(--border-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #667eea;
+        color: #667eea;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .modal-actions {
+        padding: 2rem;
+        background: #f7fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .alert-message {
+        padding: 1rem 1.5rem;
+        border-radius: var(--border-radius-md);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .alert-message i {
+        font-size: 1.2rem;
+    }
+    
     /* No Data Message */
     .no-data {
         padding: 3rem;
@@ -699,8 +906,6 @@
                             <th>Age & Gender</th>
                             <th>Found Location</th>
                             <th>Found Date</th>
-                            <th>Match Status</th>
-                            <th>Matched To</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -746,51 +951,22 @@
                             </td>
                             
                             <td>
-                                <span class="match-status-badge status-{{ found.match_status }}">
-                                    {% if found.match_status == 'pending' %}
-                                        <i class="fas fa-hourglass-half"></i> Pending
-                                    {% elif found.match_status == 'confirmed' %}
-                                        <i class="fas fa-check"></i> Confirmed
-                                    {% else %}
-                                        <i class="fas fa-times"></i> Rejected
-                                    {% endif %}
-                                </span>
-                            </td>
-                            
-                            <td>
-                                {% if found.related_missing_person %}
-                                    <div>
-                                        <strong>{{ found.related_missing_person.full_name }}</strong>
-                                    </div>
-                                    {% if found.match_confidence %}
-                                    <div style="font-size: 0.9rem; color: #718096;">
-                                        <small>{{ "%.1f"|format(found.match_confidence) }}% match</small>
-                                    </div>
-                                    {% endif %}
-                                {% else %}
-                                    <span style="color: #a0aec0;">No match</span>
-                                {% endif %}
-                            </td>
-                            
-                            <td>
                                 <div class="action-buttons-found">
                                     <button class="btn-action btn-view" onclick="viewFoundDetails({{ found.id }})" title="View Details">
                                         <i class="fas fa-eye"></i> View
                                     </button>
                                     
-                                    {% if found.match_status == 'pending' and found.related_missing_person %}
-                                    <button class="btn-action btn-confirm" onclick="confirmMatch({{ found.id }})" title="Confirm Match">
-                                        <i class="fas fa-check"></i> Confirm
-                                    </button>
-                                    
-                                    <button class="btn-action btn-reject" onclick="rejectMatch({{ found.id }})" title="Reject Match">
-                                        <i class="fas fa-times"></i> Reject
-                                    </button>
-                                    {% endif %}
-                                    
                                     <button class="btn-action btn-delete" onclick="deleteFound({{ found.id }}, '{{ found.finder_name }}')" title="Delete Report">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
+                                    
+                                    {% if found.match_status != 'resolved' %}
+                                    <button class="btn-action btn-resolved" onclick="markResolved({{ found.id }})" title="Mark as Resolved">
+                                        <i class="fas fa-check-circle"></i> Resolved
+                                    </button>
+                                    {% else %}
+                                    <span style="color: #004d40; font-weight: 600;"><i class="fas fa-check-circle"></i> Resolved</span>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
@@ -808,67 +984,313 @@
     </div>
 </section>
 
+<!-- Detail Modal -->
+<div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-circle"></i> Found Person Details</h2>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Alert Messages -->
+            <div id="modalAlert" class="alert-message" style="display: none;"></div>
+            
+            <!-- Photo Section -->
+            <div class="detail-section">
+                <h3><i class="fas fa-image"></i> Photo</h3>
+                <div id="photoContainer">
+                    <div class="no-photo-modal"><i class="fas fa-user"></i></div>
+                </div>
+            </div>
+            
+            <!-- Found Person Info -->
+            <div class="detail-section">
+                <h3><i class="fas fa-info-circle"></i> Found Person Information</h3>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-birthday-cake"></i> Age</div>
+                    <div class="detail-value" id="detailAge">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-venus-mars"></i> Gender</div>
+                    <div class="detail-value" id="detailGender">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-bars"></i> Description</div>
+                    <div class="detail-value" id="detailDescription">-</div>
+                </div>
+            </div>
+            
+            <!-- Location Info -->
+            <div class="detail-section">
+                <h3><i class="fas fa-map-marker-alt"></i> Location & Time</h3>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-marker"></i> Location</div>
+                    <div class="detail-value" id="detailLocation">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-calendar"></i> Date</div>
+                    <div class="detail-value" id="detailDate">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-clock"></i> Time</div>
+                    <div class="detail-value" id="detailTime">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-notes-medical"></i> Condition</div>
+                    <div class="detail-value" id="detailCondition">-</div>
+                </div>
+            </div>
+            
+            <!-- Finder Info -->
+            <div class="detail-section">
+                <h3><i class="fas fa-user-tie"></i> Finder Information</h3>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-user"></i> Name</div>
+                    <div class="detail-value" id="detailFinderName">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-phone"></i> Phone</div>
+                    <div class="detail-value" id="detailFinderPhone">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-envelope"></i> Email</div>
+                    <div class="detail-value" id="detailFinderEmail">-</div>
+                </div>
+            </div>
+            
+            <!-- Status Info -->
+            <div class="detail-section">
+                <h3><i class="fas fa-flag"></i> Status</h3>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-chart-pie"></i> Status</div>
+                    <div class="detail-value" id="detailStatus">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label"><i class="fas fa-calendar-check"></i> Added</div>
+                    <div class="detail-value" id="detailCreatedAt">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="btn-action btn-delete" onclick="deleteFoundFromModal()" title="Delete Report">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="btn-action btn-resolved" onclick="markResolvedFromModal()" id="resolveBtn" title="Mark as Resolved">
+                <i class="fas fa-check-circle"></i> Mark Resolved
+            </button>
+            <button class="btn-action btn-view" onclick="closeModal()" title="Close">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+
+<!-- Alert Messages Container -->
+<div id="pageAlert" style="position: fixed; top: 20px; right: 20px; z-index: 999; max-width: 400px; min-width: 300px;"></div>
 
 {% block js %}
 <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
 <script>
+    // Global variable to store current found person ID
+    let currentFoundId = null;
+    
+    // Show alert message
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('pageAlert');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert-message alert-${type}`;
+        alertDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        alertContainer.appendChild(alertDiv);
+        
+        // Auto-remove after 4 seconds
+        setTimeout(() => {
+            alertDiv.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => alertDiv.remove(), 300);
+        }, 4000);
+    }
+    
+    // Show modal alert
+    function showModalAlert(message, type = 'success') {
+        const modalAlert = document.getElementById('modalAlert');
+        modalAlert.className = `alert-message alert-${type}`;
+        modalAlert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        modalAlert.style.display = 'flex';
+        
+        // Auto-hide after 4 seconds
+        setTimeout(() => {
+            modalAlert.style.display = 'none';
+        }, 4000);
+    }
+    
+    // View found person details
     function viewFoundDetails(foundId) {
-        alert('Detailed view for found person #' + foundId + ' (coming soon)');
-    }
-    
-    function confirmMatch(foundId) {
-        if (confirm('Confirm this match?')) {
-            fetch(`/api/admin/found/${foundId}/confirm-match`, {
-                method: 'POST',
-            })
+        currentFoundId = foundId;
+        
+        fetch(`/api/admin/found/${foundId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Match confirmed!');
-                    location.reload();
+                    const found = data.data;
+                    
+                    // Populate photo
+                    const photoContainer = document.getElementById('photoContainer');
+                    if (found.photo_paths && found.photo_paths.length > 0) {
+                        photoContainer.innerHTML = `
+                            <img src="${getPhotoUrl(found.photo_paths[0])}" alt="Found person" class="detail-photo">
+                        `;
+                    } else {
+                        photoContainer.innerHTML = '<div class="no-photo-modal"><i class="fas fa-user"></i></div>';
+                    }
+                    
+                    // Populate details
+                    document.getElementById('detailAge').textContent = found.approx_age;
+                    document.getElementById('detailGender').textContent = found.approx_gender;
+                    document.getElementById('detailDescription').textContent = found.physical_description;
+                    document.getElementById('detailLocation').textContent = found.found_location;
+                    document.getElementById('detailDate').textContent = found.found_date;
+                    document.getElementById('detailTime').textContent = found.found_time;
+                    document.getElementById('detailCondition').textContent = found.found_condition;
+                    document.getElementById('detailFinderName').textContent = found.finder_name;
+                    document.getElementById('detailFinderPhone').textContent = found.finder_phone;
+                    document.getElementById('detailFinderEmail').textContent = found.finder_email || 'Not provided';
+                    document.getElementById('detailStatus').textContent = capitalizeFirst(found.match_status);
+                    document.getElementById('detailCreatedAt').textContent = found.created_at;
+                    
+                    // Update resolve button state
+                    const resolveBtn = document.getElementById('resolveBtn');
+                    if (found.match_status === 'resolved') {
+                        resolveBtn.disabled = true;
+                        resolveBtn.style.opacity = '0.6';
+                        resolveBtn.style.cursor = 'not-allowed';
+                        resolveBtn.innerHTML = '<i class="fas fa-check-circle"></i> Already Resolved';
+                    } else {
+                        resolveBtn.disabled = false;
+                        resolveBtn.style.opacity = '1';
+                        resolveBtn.style.cursor = 'pointer';
+                        resolveBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Resolved';
+                    }
+                    
+                    // Open modal
+                    document.getElementById('detailModal').classList.add('active');
                 } else {
-                    alert('Error: ' + data.message);
+                    showAlert(data.message || 'Error loading details', 'error');
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error loading found person details', 'error');
+            });
+    }
+    
+    // Close modal
+    function closeModal(event) {
+        if (event && event.target !== document.getElementById('detailModal')) {
+            return;
+        }
+        document.getElementById('detailModal').classList.remove('active');
+        document.getElementById('modalAlert').style.display = 'none';
+    }
+    
+    // Mark as resolved
+    function markResolved(foundId) {
+        if (confirm('Mark this report as resolved?')) {
+            markResolvedRequest(foundId);
         }
     }
     
-    function rejectMatch(foundId) {
-        if (confirm('Reject this match?')) {
-            fetch(`/api/admin/found/${foundId}/reject-match`, {
-                method: 'POST',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Match rejected!');
-                    location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    // Mark as resolved from modal
+    function markResolvedFromModal() {
+        if (confirm('Mark this report as resolved?')) {
+            markResolvedRequest(currentFoundId);
         }
     }
     
+    // Actual mark resolved request
+    function markResolvedRequest(foundId) {
+        fetch(`/api/admin/found/${foundId}/mark-resolved`, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message || 'Report marked as resolved', 'success');
+                showModalAlert(data.message || 'Report marked as resolved', 'success');
+                
+                // Update resolve button
+                const resolveBtn = document.getElementById('resolveBtn');
+                resolveBtn.disabled = true;
+                resolveBtn.style.opacity = '0.6';
+                resolveBtn.style.cursor = 'not-allowed';
+                resolveBtn.innerHTML = '<i class="fas fa-check-circle"></i> Already Resolved';
+                
+                // Reload table after 1.5 seconds
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(data.message || 'Error marking as resolved', 'error');
+                showModalAlert(data.message || 'Error marking as resolved', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error marking as resolved', 'error');
+            showModalAlert('Error marking as resolved', 'error');
+        });
+    }
+    
+    // Delete from modal
+    function deleteFoundFromModal() {
+        if (confirm('Delete this report? This action cannot be undone.')) {
+            deleteFound(currentFoundId, 'this found person reported');
+            closeModal();
+        }
+    }
+    
+    // Delete found person
     function deleteFound(foundId, finderName) {
-        if (confirm(`Delete report from ${finderName}? This action cannot be undone.`)) {
-            fetch(`/api/admin/delete-found/${foundId}`, {
-                method: 'DELETE',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Report deleted successfully');
-                    location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        if (!confirm(`Delete report from ${finderName}? This action cannot be undone.`)) {
+            return;
         }
+        
+        fetch(`/api/admin/delete-found/${foundId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message || 'Report deleted successfully', 'success');
+                // Reload page after 1 second
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showAlert(data.message || 'Error deleting report', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Error deleting report', 'error');
+        });
+    }
+    
+    // Helper function to get photo URL
+    function getPhotoUrl(photoPath) {
+        if (photoPath.startsWith('/')) {
+            return `{{ url_for('static', filename='') }}${photoPath.substring(1)}`;
+        }
+        return `{{ url_for('static', filename='') }}${photoPath}`;
+    }
+    
+    // Helper function to capitalize first letter
+    function capitalizeFirst(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 </script>
 {% endblock %}

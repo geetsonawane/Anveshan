@@ -97,3 +97,9 @@ app_backup.py
 tmp/
 temp/
 *.tmp
+
+# Archive (development artifacts)
+archive/
+
+# Test files (optional)
+test_*.py
