@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Found Person Report - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/found_person.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Report Found Person</h1>
+        <p>Help reunite a found individual with their family by providing information</p>
+    </div>
+</section>
+
+<section class="report-form-section">
+    <div class="container">
+        <div class="form-container">
+            <form id="found-person-form" class="report-form">
+                <div class="form-section">
+                    <h3>Found Person Details</h3>
+                    <div class="form-group">
+                        <label for="found-location" class="required-field">Where was the person found?</label>
+                        <input type="text" id="found-location" name="found-location" placeholder="Address, landmark, or area" required>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="found-date" class="required-field">Found Date</label>
+                            <input type="date" id="found-date" name="found-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="found-time" class="required-field">Found Time</label>
+                            <input type="time" id="found-time" name="found-time" required>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="found-condition">Condition of the Person</label>
+                        <textarea id="found-condition" name="found-condition" rows="3" placeholder="Describe their physical and mental state"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Person Description</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="approx-age">Approximate Age</label>
+                            <input type="number" id="approx-age" name="approx-age" min="1" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="approx-gender">Approximate Gender</label>
+                            <select id="approx-gender" name="approx-gender">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other/Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="physical-description">Physical Description</label>
+                        <textarea id="physical-description" name="physical-description" rows="3" placeholder="Height, weight, hair color, eye color, distinguishing features"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="clothing-description">Clothing Description</label>
+                        <textarea id="clothing-description" name="clothing-description" rows="3" placeholder="What they were wearing when found"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Upload Photos</h3>
+                    <div class="privacy-notice">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h4>Privacy Notice</h4>
+                            <p>For privacy reasons, please avoid showing the person's face clearly unless necessary for identification. Focus on clothing, accessories, or other identifying features.</p>
+                        </div>
+                    </div>
+                    <div class="upload-area" id="found-upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop photos here or click to browse</p>
+                        <input type="file" id="found-photo-upload" name="found-photo-upload" accept="image/*" multiple hidden>
+                    </div>
+                    <div id="found-uploaded-photos" class="uploaded-photos"></div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Current Location</h3>
+                    <div class="form-group">
+                        <label for="current-location" class="required-field">Where is the person now?</label>
+                        <select id="current-location" name="current-location" required>
+                            <option value="">Select Current Location</option>
+                            <option value="with-me">With Me</option>
+                            <option value="safe-place">At a Safe Place (Police Station, Hospital, etc.)</option>
+                            <option value="other">Other Location</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width" id="location-details-container" style="display: none;">
+                        <label for="location-details">Location Details</label>
+                        <input type="text" id="location-details" name="location-details" placeholder="Provide specific location details">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Your Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="finder-name" class="required-field">Your Name</label>
+                            <input type="text" id="finder-name" name="finder-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="finder-phone" class="required-field">Phone Number</label>
+                            <input type="tel" id="finder-phone" name="finder-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="finder-email">Email Address</label>
+                            <input type="email" id="finder-email" name="finder-email">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Submit Found Report</button>
+                    <button type="reset" class="btn btn-outline">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="quick-actions">
+    <div class="container">
+        <h2 class="section-title">What to Do Next</h2>
+        <div class="actions-grid">
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Ensure Safety</h3>
+                <p>Make sure the person is in a safe location and their immediate needs are met.</p>
+            </div>
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3>Contact Authorities</h3>
+                <p>Inform local police or relevant authorities about the found person.</p>
+            </div>
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Provide Comfort</h3>
+                <p>Offer reassurance and comfort while waiting for family or authorities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/found_person.js') }}"></script>
+{% endblock %}

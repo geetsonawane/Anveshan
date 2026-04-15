@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Anveshan - Find Missing Loved Ones{% endblock %}</title>
+    
+    <!-- Base CSS (loaded on all pages) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    
+    <!-- Page-specific CSS -->
+    {% block css %}{% endblock %}
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="{{ url_for('index') }}">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Anveshan Logo">
+                        <span>Anveshan</span>
+                    </a>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('report_missing') }}" class="nav-link">Report Missing</a>
+                    <a href="{{ url_for('found_person') }}" class="nav-link">Found Person</a>
+                    <a href="{{ url_for('search_results') }}" class="nav-link">Search</a>
+                    <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                    <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+                    
+                    {% if session.get('admin') %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link admin-link">
+                            <i class="fas fa-user-shield"></i> Admin
+                        </a>
+                        <a href="{{ url_for('admin_logout') }}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('admin_login') }}" class="nav-link admin-link">
+                            <i class="fas fa-sign-in-alt"></i> Admin Login
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        <span class="flash-text">{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Anveshan Logo">
+                    <h3>Anveshan</h3>
+                </div>
+                <p>Bringing missing loved ones back home through community and technology.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('report_missing') }}">Report Missing</a></li>
+                    <li><a href="{{ url_for('found_person') }}">Found Person</a></li>
+                    <li><a href="{{ url_for('search_results') }}">Search</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Safety Tips</a></li>
+                    <li><a href="#">Prevention Guide</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                    <li><a href="#">Volunteer</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Help Street, City, Country</li>
+                    <li><i class="fas fa-phone"></i> +1 234 567 8900</li>
+                    <li><i class="fas fa-envelope"></i> help@anveshan.org</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Anveshan. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Base JavaScript (loaded on all pages) -->
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    
+    <!-- Page-specific JavaScript -->
+    {% block js %}{% endblock %}
+</body>
+</html>

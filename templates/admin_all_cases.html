@@ -1,0 +1,1265 @@
+{% extends "base.html" %}
+
+{% block title %}All Missing Person Cases - Admin - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+<style>
+    /* ========================================
+       Modern Admin All-Cases Page Styles
+       ======================================== */
+    
+    :root {
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --gradient-danger: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --shadow-soft: 0 2px 20px rgba(0,0,0,0.08);
+        --shadow-medium: 0 4px 30px rgba(0,0,0,0.12);
+        --shadow-strong: 0 8px 40px rgba(0,0,0,0.15);
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius-lg: 16px;
+        --border-radius-md: 12px;
+        --border-radius-sm: 8px;
+    }
+    
+    /* Main Section */
+    .all-cases-section {
+        padding: 2rem 0 4rem;
+        background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        min-height: calc(100vh - 200px);
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Enhanced Page Header */
+    .page-header-admin {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .page-header-admin::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .page-header-admin h1 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        animation: slideInLeft 0.6s ease-out;
+    }
+    
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .page-header-admin h1 i {
+        font-size: 2.2rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .page-header-admin p {
+        margin: 0.75rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1.1rem;
+        font-weight: 300;
+        position: relative;
+        z-index: 1;
+        animation: slideInLeft 0.8s ease-out;
+    }
+    
+    /* ========================================
+       Enhanced Filters Section
+       ======================================== */
+    
+    .filters-section {
+        background: white;
+        padding: 2rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 2rem;
+        transition: var(--transition-smooth);
+        animation: slideUp 0.6s ease-out;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .filters-section:hover {
+        box-shadow: var(--shadow-medium);
+        transform: translateY(-2px);
+    }
+    
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .filters-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .filters-header h2 i {
+        color: #667eea;
+        font-size: 1.3rem;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        position: relative;
+    }
+    
+    .filter-group label {
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition-smooth);
+    }
+    
+    .filter-group label i {
+        color: #667eea;
+        font-size: 0.9rem;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        padding: 0.9rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius-md);
+        font-size: 0.95rem;
+        transition: var(--transition-smooth);
+        background: #f7fafc;
+        font-family: inherit;
+    }
+    
+    .filter-group select:hover,
+    .filter-group input:hover {
+        border-color: #cbd5e0;
+        background: white;
+    }
+    
+    .filter-group select:focus,
+    .filter-group input:focus {
+        border-color: #667eea;
+        outline: none;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .filter-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: var(--border-radius-md);
+        margin-top: 1.5rem;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .filter-stat {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        border: 2px solid transparent;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: var(--transition-smooth);
+        cursor: default;
+        animation: fadeInScale 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .filter-stat:nth-child(1) { animation-delay: 0.1s; }
+    .filter-stat:nth-child(2) { animation-delay: 0.2s; }
+    .filter-stat:nth-child(3) { animation-delay: 0.3s; }
+    .filter-stat:nth-child(4) { animation-delay: 0.4s; }
+    .filter-stat:nth-child(5) { animation-delay: 0.5s; }
+    
+    .filter-stat:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .filter-stat strong {
+        color: #667eea;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    /* ========================================
+       Enhanced Cases Table Container
+       ======================================== */
+    
+    .cases-table-container {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        animation: slideUp 0.8s ease-out;
+        transition: var(--transition-smooth);
+    }
+    
+    .cases-table-container:hover {
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .table-header {
+        padding: 2rem;
+        background: var(--gradient-primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .table-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .table-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .table-header h2 i {
+        font-size: 1.4rem;
+    }
+    
+    .table-header .btn {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        max-height: 70vh;
+        scrollbar-width: thin;
+        scrollbar-color: #667eea #f1f1f1;
+    }
+    
+    .table-wrapper::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+    }
+    
+    .enhanced-cases-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .enhanced-cases-table thead {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        z-index: 10;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .enhanced-cases-table th {
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 3px solid #667eea;
+        background: inherit;
+        white-space: nowrap;
+    }
+    
+    .enhanced-cases-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: var(--transition-smooth);
+        background: white;
+    }
+    
+    .enhanced-cases-table tbody tr:hover {
+        background: linear-gradient(90deg, #f7fafc 0%, #edf2f7 100%);
+        transform: scale(1.002);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .enhanced-cases-table td {
+        padding: 1.2rem 1rem;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        color: #2d3748;
+    }
+    
+    /* ========================================
+       Enhanced Photo Display
+       ======================================== */
+    
+    .case-photo-large {
+        position: relative;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: var(--transition-smooth);
+    }
+    
+    .case-photo-large::before {
+        content: '\f002';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        color: white;
+        opacity: 0;
+        transition: var(--transition-smooth);
+        z-index: 2;
+    }
+    
+    .case-photo-large::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(102, 126, 234, 0.8);
+        opacity: 0;
+        transition: var(--transition-smooth);
+        z-index: 1;
+    }
+    
+    .case-photo-large:hover::before,
+    .case-photo-large:hover::after {
+        opacity: 1;
+    }
+    
+    .case-photo-large img {
+        width: 100px;
+        height: 100px;
+        border-radius: 14px;
+        object-fit: cover;
+        border: 3px solid #667eea;
+        transition: var(--transition-smooth);
+        display: block;
+    }
+    
+    .case-photo-large:hover img {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+    }
+    
+    .photo-count {
+        position: absolute;
+        bottom: -8px;
+        right: -8px;
+        background: var(--gradient-danger);
+        color: white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        z-index: 3;
+        animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+    }
+    
+    .no-photo-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #cbd5e0;
+        border: 2px dashed #e2e8f0;
+        transition: var(--transition-smooth);
+    }
+    
+    .no-photo-large:hover {
+        border-color: #667eea;
+        color: #667eea;
+        transform: scale(1.05);
+    }
+    
+    /* ========================================
+       Enhanced Action Buttons
+       ======================================== */
+    .action-buttons-enhanced {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .btn-action {
+        padding: 0.65rem 1rem;
+        border-radius: var(--border-radius-md);
+        border: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition-smooth);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.4s, height 0.4s;
+    }
+    
+    .btn-action:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-action i {
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-action span {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .btn-view {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .btn-view:hover {
+        background: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    }
+    
+    .btn-edit {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+    
+    .btn-edit:hover {
+        background: #f57c00;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-photos {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        color: #6a1b9a;
+        border: 1px solid #ce93d8;
+    }
+    
+    .btn-photos:hover {
+        background: var(--gradient-primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(123, 31, 162, 0.4);
+    }
+    
+    .btn-alert {
+        background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+        color: #00695c;
+        border: 1px solid #80cbc4;
+    }
+    
+    .btn-alert:hover {
+        background: var(--gradient-success);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 121, 107, 0.4);
+    }
+    
+    .btn-resolve {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        color: #2e7d32;
+        border: 1px solid #81c784;
+    }
+    
+    .btn-resolve:hover {
+        background: var(--gradient-success);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+    
+    .btn-delete {
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        color: #c62828;
+        border: 1px solid #ef5350;
+    }
+    
+    .btn-delete:hover {
+        background: var(--gradient-danger);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+    }
+    
+    /* ========================================
+       Enhanced Photo Modal
+       ======================================== */
+    
+    .photo-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.96);
+        backdrop-filter: blur(8px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .photo-modal.show {
+        display: flex;
+    }
+    
+    .photo-modal-content {
+        max-width: 90%;
+        max-height: 90%;
+        position: relative;
+        animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes zoomIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .photo-modal img {
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        border: 4px solid white;
+    }
+    
+    .photo-modal-close {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        background: white;
+        color: #2d3748;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: var(--transition-smooth);
+    }
+    
+    .photo-modal-close:hover {
+        background: #667eea;
+        color: white;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .photo-gallery {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .photo-gallery img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: var(--border-radius-md);
+        cursor: pointer;
+        border: 3px solid white;
+        transition: var(--transition-smooth);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .photo-gallery img:hover {
+        transform: scale(1.15);
+        border-color: #667eea;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+        z-index: 10;
+    }
+    
+    /* ========================================
+       Responsive Design
+       ======================================== */
+    
+    @media (max-width: 1200px) {
+        .filters-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header-admin h1 {
+            font-size: 1.8rem;
+        }
+        
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-stats {
+            justify-content: center;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        .enhanced-cases-table {
+            font-size: 0.85rem;
+        }
+        
+        .enhanced-cases-table th,
+        .enhanced-cases-table td {
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .case-photo-large img,
+        .no-photo-large {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .action-buttons-enhanced {
+            gap: 0.4rem;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-header-admin {
+            padding: 2rem 0;
+        }
+        
+        .page-header-admin h1 {
+            font-size: 1.5rem;
+        }
+        
+        .filters-section,
+        .cases-table-container {
+            border-radius: var(--border-radius-md);
+        }
+        
+        .table-header {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .case-photo-large img,
+        .no-photo-large {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .action-buttons-enhanced {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    /* ========================================
+       Loading and Empty States
+       ======================================== */
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #718096;
+    }
+    
+    .no-data i {
+        font-size: 5rem;
+        opacity: 0.2;
+        margin-bottom: 1rem;
+        color: #cbd5e0;
+    }
+    
+    .no-data p {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 1rem 0;
+    }
+    
+    /* ========================================
+       Information Banner at Top
+       ======================================== */
+    
+    .info-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        margin-bottom: 0;
+        animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .info-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.05) 10px,
+            rgba(255, 255, 255, 0.05) 20px
+        );
+        animation: moveStripes 20s linear infinite;
+    }
+    
+    @keyframes moveStripes {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+    }
+    
+    .info-banner-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .info-banner h2 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+        animation: pulseText 3s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    @keyframes pulseText {
+        0%, 100% {
+            transform: scale(1);
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+        }
+        50% {
+            transform: scale(1.03);
+            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+    }
+    
+    .info-banner h2 i {
+        font-size: 2.2rem;
+        animation: rotateIcon 4s ease-in-out infinite;
+    }
+    
+    @keyframes rotateIcon {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+    
+    .info-banner-subtitle {
+        margin-top: 0.75rem;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 300;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .info-banner-divider {
+        width: 100px;
+        height: 4px;
+        background: white;
+        margin: 1.5rem auto;
+        border-radius: 2px;
+        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        animation: expandWidth 2s ease-in-out infinite;
+    }
+    
+    @keyframes expandWidth {
+        0%, 100% { width: 100px; }
+        50% { width: 150px; }
+    }
+    
+    @media (max-width: 768px) {
+        .info-banner h2 {
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+        
+        .info-banner-subtitle {
+            font-size: 0.95rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .info-banner {
+            padding: 1.5rem 0;
+        }
+        
+        .info-banner h2 {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+        
+        .info-banner h2 i {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Prominent Information Banner -->
+<div class="info-banner">
+    <div class="container">
+        <div class="info-banner-content">
+            <h2>
+                <i class="fas fa-exclamation-triangle"></i>
+                ALL MISSING PERSON INFORMATION
+                <i class="fas fa-exclamation-triangle"></i>
+            </h2>
+            <div class="info-banner-divider"></div>
+            <p class="info-banner-subtitle">Complete Database of Missing Persons Cases</p>
+        </div>
+    </div>
+</div>
+
+<div class="page-header-admin">
+    <div class="container">
+        <h1><i class="fas fa-users"></i> All Missing Person Cases</h1>
+        <p>Complete case management with full CRUD operations and photo viewing</p>
+    </div>
+</div>
+
+<section class="all-cases-section">
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-header">
+                <h2><i class="fas fa-filter"></i> Filter & Search</h2>
+                <button class="btn btn-secondary" onclick="resetFilters()">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+            
+            <form method="GET" action="{{ url_for('admin_all_cases') }}">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label><i class="fas fa-list"></i> Status</label>
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Status</option>
+                            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                            <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-tag"></i> Category</label>
+                        <select name="category" onchange="this.form.submit()">
+                            <option value="all" {% if category_filter == 'all' %}selected{% endif %}>All Categories</option>
+                            <option value="child" {% if category_filter == 'child' %}selected{% endif %}>Child</option>
+                            <option value="adult" {% if category_filter == 'adult' %}selected{% endif %}>Adult</option>
+                            <option value="alzheimer" {% if category_filter == 'alzheimer' %}selected{% endif %}>Alzheimer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-search"></i> Search Name</label>
+                        <input type="text" name="search" value="{{ search_query }}" placeholder="Enter name...">
+                    </div>
+                    
+                    <div class="filter-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="filter-stats">
+                <div class="filter-stat"><strong>{{ counts.all }}</strong> Total</div>
+                <div class="filter-stat"><strong>{{ counts.active }}</strong> Active</div>
+                <div class="filter-stat"><strong>{{ counts.resolved }}</strong> Resolved</div>
+                <div class="filter-stat"><strong>{{ counts.child }}</strong> Children</div>
+                <div class="filter-stat"><strong>{{ counts.alzheimer }}</strong> Alzheimer</div>
+            </div>
+        </div>
+        
+        <!-- Cases Table -->
+        <div class="cases-table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-table"></i> {{ cases|length }} Cases</h2>
+                <button class="btn btn-light" onclick="exportCases()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+            
+            <div class="table-wrapper">
+                {% if cases %}
+                    <table class="enhanced-cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Photo</th>
+                                <th>Name & Details</th>
+                                <th>Age/Gender</th>
+                                <th>Missing Since</th>
+                                <th>Location</th>
+                                <th>Reporter</th>
+                                <th>Reporter Email</th>
+                                <th>Family Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for case in cases %}
+                            <tr data-case-id="{{ case.id }}">
+                                <td><strong>#{{ case.id }}</strong></td>
+                                
+                                <td>
+                                    {% if case.photo_paths %}
+                                        {% set photos = case.photo_paths.split(',') %}
+                                        <div class="case-photo-large" onclick="showPhotoModal('{{ photos|join(',') }}')">
+                                            <img src="{{ url_for('static', filename=photos[0]) }}" alt="{{ case.full_name }}">
+                                            {% if photos|length > 1 %}
+                                                <span class="photo-count">{{ photos|length }}</span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="no-photo-large"><i class="fas fa-user"></i></div>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    <div class="case-name">{{ case.full_name }}</div>
+                                    <span class="badge badge-{{ case.category }}">{{ case.category|title }}</span>
+                                    {% if case.category == 'child' %}
+                                        <span class="badge badge-urgent">URGENT</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    <strong>{{ case.age }} yrs</strong><br>
+                                    <small>{{ case.gender|title }}</small>
+                                </td>
+                                
+                                <td>
+                                    <div>{{ case.last_seen_date.strftime('%b %d, %Y') if case.last_seen_date else 'N/A' }}</div>
+                                    <small style="color: var(--text-light);">{{ case.get_time_missing() }}</small>
+                                </td>
+                                
+                                <td>
+                                    <i class="fas fa-map-marker-alt" style="color: var(--danger-color);"></i>
+                                    {{ case.last_seen_location[:35] }}{% if case.last_seen_location|length > 35 %}...{% endif %}
+                                </td>
+                                
+                                <td>
+                                    <div><i class="fas fa-user"></i> {{ case.reporter_name[:20] }}</div>
+                                    <div><i class="fas fa-phone"></i> {{ case.reporter_phone }}</div>
+                                </td>
+                                
+                                <td>
+                                    <a href="mailto:{{ case.reporter_email }}" title="Email: {{ case.reporter_email }}" style="color: #667eea; text-decoration: none; cursor: pointer;">
+                                        <i class="fas fa-envelope"></i> {{ case.reporter_email[:30] }}{% if case.reporter_email|length > 30 %}...{% endif %}
+                                    </a>
+                                </td>
+                                
+                                <td>
+                                    <div><i class="fas fa-user-tie"></i> <strong>{{ case.reporter_relationship|title if case.reporter_relationship else 'N/A' }}</strong></div>
+                                    <a href="mailto:{{ case.reporter_email }}" title="Email: {{ case.reporter_email }}" style="color: #667eea; font-size: 0.9rem; text-decoration: none;">
+                                        <i class="fas fa-envelope"></i> {{ case.reporter_email[:25] }}{% if case.reporter_email|length > 25 %}...{% endif %}
+                                    </a>
+                                </td>
+                                
+                                <td>
+                                    <span class="status-badge {% if case.status == 'resolved' %}resolved{% elif case.status == 'active' %}active{% else %}closed{% endif %}">
+                                        <i class="fas fa-circle"></i> {{ case.status|title }}
+                                    </span>
+                                </td>
+                                
+                                <td>
+                                    <div class="action-buttons-enhanced">
+                                        {% if case.photo_paths %}
+                                        <button class="btn-action btn-photos" onclick="showPhotoModal('{{ case.photo_paths }}')" title="View All Photos">
+                                            <i class="fas fa-images"></i> Photos
+                                        </button>
+                                        {% endif %}
+                                        
+                                        <button class="btn-action btn-alert" onclick="sendAlert({{ case.id }}, '{{ case.full_name }}')" title="Send Alert">
+                                            <i class="fas fa-bell"></i> Alert
+                                        </button>
+                                        
+                                        {% if case.status != 'resolved' %}
+                                        <button class="btn-action btn-resolve" onclick="resolveCase({{ case.id }})" title="Mark Resolved">
+                                            <i class="fas fa-check"></i> Resolve
+                                        </button>
+                                        {% endif %}
+                                        
+                                        <button class="btn-action btn-delete" onclick="deleteCase({{ case.id }}, '{{ case.full_name }}')" title="Delete Case">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="no-data" style="padding: 3rem;">
+                        <i class="fas fa-inbox" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <p style="font-size: 1.2rem;">No cases found</p>
+                        <button class="btn btn-primary" onclick="resetFilters()">Clear Filters</button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Photo Modal -->
+<div id="photoModal" class="photo-modal" onclick="closePhotoModal(event)">
+    <button class="photo-modal-close" onclick="closePhotoModal(event)">×</button>
+    <div class="photo-modal-content">
+        <img id="modalPhoto" src="" alt="Case Photo">
+        <div class="photo-gallery" id="photoGallery"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+<script>
+    function showPhotoModal(photoPaths) {
+        const modal = document.getElementById('photoModal');
+        const modalPhoto = document.getElementById('modalPhoto');
+        const gallery = document.getElementById('photoGallery');
+        
+        const photos = photoPaths.split(',');
+        
+        modalPhoto.src = "{{ url_for('static', filename='') }}" + photos[0].trim();
+        
+        gallery.innerHTML = '';
+        photos.forEach(photo => {
+            const img = document.createElement('img');
+            img.src = "{{ url_for('static', filename='') }}" + photo.trim();
+            img.onclick = function(e) {
+                e.stopPropagation();
+                modalPhoto.src = this.src;
+            };
+            gallery.appendChild(img);
+        });
+        
+        modal.classList.add('show');
+    }
+    
+    function closePhotoModal(event) {
+        if (event.target.id === 'photoModal' || event.target.classList.contains('photo-modal-close')) {
+            document.getElementById('photoModal').classList.remove('show');
+        }
+    }
+    
+    function resetFilters() {
+        window.location.href = "{{ url_for('admin_all_cases') }}";
+    }
+    
+    function sendAlert(caseId, caseName) {
+        if (confirm(`Send community alert for "${caseName}"?`)) {
+            showNotification('Alert functionality coming soon', 'info');
+        }
+    }
+    
+    function downloadCaseReport(caseId) {
+        showNotification('PDF download coming soon', 'info');
+    }
+    
+    function exportCases() {
+        showNotification('Export functionality coming soon', 'info');
+    }
+</script>
+{% endblock %}

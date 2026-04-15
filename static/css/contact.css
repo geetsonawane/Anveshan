@@ -1,0 +1,336 @@
+/* Contact Page Specific Styles */
+
+.contact-section {
+    padding: 4rem 0;
+    background-color: var(--light-color);
+}
+
+/* Contact Content */
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+/* Contact Info */
+.contact-info h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.contact-info > p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--gray-color);
+}
+
+.contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.contact-method {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.contact-method:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.contact-method i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+    width: 24px;
+    text-align: center;
+}
+
+.contact-method h4 {
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.contact-method p {
+    margin-bottom: 0;
+    color: var(--gray-color);
+    line-height: 1.5;
+}
+
+/* Emergency Contact */
+.emergency-contact {
+    background: linear-gradient(135deg, var(--danger-color), #c1121f);
+    color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-top: 2rem;
+}
+
+.emergency-contact h3 {
+    color: white;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.emergency-contact p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+.emergency-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.emergency-buttons .btn {
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.emergency-buttons .btn-outline {
+    color: white;
+    border-color: white;
+}
+
+.emergency-buttons .btn-outline:hover {
+    background: white;
+    color: var(--danger-color);
+}
+
+/* Contact Form */
+.contact-form-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    position: sticky;
+    top: 100px;
+}
+
+.contact-form h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.contact-form .form-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+.contact-form .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.contact-form textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.contact-form .form-actions {
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 4rem 0;
+}
+
+.faq-grid {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.faq-item:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.faq-question {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.faq-question:hover {
+    background: var(--light-color);
+}
+
+.faq-question h4 {
+    margin: 0;
+    color: var(--primary-color);
+    flex: 1;
+}
+
+.faq-question i {
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.faq-item.active .faq-answer {
+    padding: 0 1.5rem 1.5rem;
+    max-height: 500px;
+}
+
+.faq-answer p {
+    margin: 0;
+    color: var(--gray-color);
+    line-height: 1.6;
+}
+
+/* Success Message */
+.contact-success {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: none;
+}
+
+.contact-success i {
+    font-size: 4rem;
+    color: var(--success-color);
+    margin-bottom: 1rem;
+}
+
+.contact-success h3 {
+    color: var(--success-color);
+    margin-bottom: 1rem;
+}
+
+.contact-success p {
+    color: var(--gray-color);
+    margin-bottom: 2rem;
+}
+
+/* Map Container */
+.map-container {
+    margin-top: 2rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.map-placeholder {
+    height: 300px;
+    background: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-color);
+    font-size: 1.1rem;
+}
+
+.map-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .contact-form-container {
+        position: static;
+    }
+    
+    .contact-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-methods {
+        gap: 1rem;
+    }
+    
+    .contact-method {
+        padding: 1rem;
+    }
+    
+    .emergency-contact {
+        padding: 1.5rem;
+    }
+    
+    .emergency-buttons {
+        flex-direction: column;
+    }
+    
+    .emergency-buttons .btn {
+        min-width: auto;
+    }
+    
+    .contact-form-container {
+        padding: 1.5rem;
+    }
+    
+    .faq-question {
+        padding: 1rem;
+    }
+    
+    .faq-question h4 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-method {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .contact-method i {
+        margin-top: 0;
+    }
+    
+    .emergency-buttons .btn {
+        width: 100%;
+    }
+    
+    .contact-success {
+        padding: 2rem 1rem;
+    }
+}

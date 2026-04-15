@@ -1,0 +1,874 @@
+{% extends "base.html" %}
+
+{% block title %}Found Person Reports - Admin - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+<style>
+    /* ========================================
+       Modern Admin Found Persons Page Styles
+       (Consistent with Admin Dashboard Theme)
+       ======================================== */
+    
+    :root {
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --gradient-danger: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --shadow-soft: 0 2px 20px rgba(0,0,0,0.08);
+        --shadow-medium: 0 4px 30px rgba(0,0,0,0.12);
+        --shadow-strong: 0 8px 40px rgba(0,0,0,0.15);
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius-lg: 16px;
+        --border-radius-md: 12px;
+        --border-radius-sm: 8px;
+    }
+    
+    /* Main Section */
+    .all-found-section {
+        padding: 2rem 0 4rem;
+        background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        min-height: calc(100vh - 200px);
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Enhanced Page Header - MATCHES ADMIN DASHBOARD */
+    .page-header-admin {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .page-header-admin::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .page-header-admin h1 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        animation: slideInLeft 0.6s ease-out;
+    }
+    
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .page-header-admin h1 i {
+        font-size: 2.2rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .page-header-admin p {
+        margin: 0.75rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1.1rem;
+        font-weight: 300;
+        position: relative;
+        z-index: 1;
+        animation: slideInLeft 0.8s ease-out;
+    }
+    
+    .page-header-admin .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Filters Section - MATCHES ADMIN DASHBOARD */
+    .filters-section {
+        background: white;
+        padding: 2rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 2rem;
+        transition: var(--transition-smooth);
+        animation: slideUp 0.6s ease-out;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .filters-section:hover {
+        box-shadow: var(--shadow-medium);
+        transform: translateY(-2px);
+    }
+    
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .filters-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .filters-header h2 i {
+        color: #667eea;
+        font-size: 1.3rem;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        position: relative;
+    }
+    
+    .filter-group label {
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition-smooth);
+    }
+    
+    .filter-group label i {
+        color: #667eea;
+        font-size: 0.9rem;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        padding: 0.9rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: var(--border-radius-md);
+        font-size: 0.95rem;
+        transition: var(--transition-smooth);
+        background: #f7fafc;
+        font-family: inherit;
+    }
+    
+    .filter-group select:hover,
+    .filter-group input:hover {
+        border-color: #cbd5e0;
+        background: white;
+    }
+    
+    .filter-group select:focus,
+    .filter-group input:focus {
+        border-color: #667eea;
+        outline: none;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    /* Filter Stats */
+    .filter-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e9ecef;
+    }
+    
+    .filter-stat {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        border: 2px solid transparent;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: var(--transition-smooth);
+        animation: fadeInScale 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .filter-stat:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .filter-stat strong {
+        color: #667eea;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    /* Table Container - MATCHES ADMIN DASHBOARD */
+    .found-table-container {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        animation: slideUp 0.8s ease-out;
+    }
+    
+    .found-table-container:hover {
+        box-shadow: var(--shadow-medium);
+    }
+    
+    .table-header {
+        padding: 2rem;
+        background: var(--gradient-primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .table-header h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Table Styles - MATCHES ADMIN DASHBOARD */
+    .found-persons-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+    
+    .found-persons-table thead {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        z-index: 10;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .found-persons-table th {
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 3px solid #667eea;
+    }
+    
+    .found-persons-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: var(--transition-smooth);
+        background: white;
+    }
+    
+    .found-persons-table tbody tr:hover {
+        background: linear-gradient(90deg, #f7fafc 0%, #edf2f7 100%);
+        transform: scale(1.002);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+    }
+    
+    .found-persons-table td {
+        padding: 1.2rem 1rem;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        color: #2d3748;
+    }
+    
+    /* Photo Styles - MATCHES ADMIN DASHBOARD */
+    .found-photo {
+        position: relative;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: var(--transition-smooth);
+    }
+    
+    .found-photo img {
+        width: 100px;
+        height: 100px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 3px solid #667eea;
+        display: block;
+    }
+    
+    .found-photo:hover img {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+    }
+    
+    .no-photo-found {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #e3e8f3 0%, #d0dae8 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #667eea;
+        color: #667eea;
+        font-size: 2rem;
+    }
+    
+    /* Status Badges - MATCHES ADMIN DASHBOARD */
+    .match-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid transparent;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border-color: #ffc107;
+    }
+    
+    .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+        border-color: #28a745;
+    }
+    
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+        border-color: #f5c6cb;
+    }
+    
+    /* Action Buttons - MATCHES ADMIN DASHBOARD */
+    .action-buttons-found {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .btn-action {
+        padding: 0.65rem 1rem;
+        border-radius: var(--border-radius-md);
+        border: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition-smooth);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-action::before {
+        content: '';
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s, height 0.4s;
+    }
+    
+    .btn-action:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    /* View Button */
+    .btn-view {
+        background: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #90caf9;
+    }
+    
+    .btn-view:hover {
+        background: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    }
+    
+    /* Confirm Button */
+    .btn-confirm {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .btn-confirm:hover {
+        background: #28a745;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+    
+    /* Reject Button */
+    .btn-reject {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .btn-reject:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+    
+    /* Delete Button */
+    .btn-delete {
+        background: linear-gradient(135deg, #ffebee 0%, #ffccdd 100%);
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+    }
+    
+    .btn-delete:hover {
+        background: var(--gradient-danger);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(235, 51, 73, 0.4);
+    }
+    
+    /* No Data Message */
+    .no-data {
+        padding: 3rem;
+        text-align: center;
+    }
+    
+    .no-data i {
+        font-size: 4rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+        color: #a0aec0;
+    }
+    
+    .no-data p {
+        font-size: 1.2rem;
+        color: #718096;
+        margin: 1rem 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .filters-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .found-persons-table th,
+        .found-persons-table td {
+            padding: 1rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .found-photo img {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .no-photo-found {
+            width: 80px;
+            height: 80px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header-admin h1 {
+            font-size: 2rem;
+        }
+        
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-stat {
+            flex: 1 1auto;
+        }
+        
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: left;
+        }
+        
+        .found-persons-table {
+            font-size: 0.85rem;
+        }
+        
+        .found-persons-table th,
+        .found-persons-table td {
+            padding: 0.8rem 0.5rem;
+        }
+        
+        .found-photo img,
+        .no-photo-found {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .action-buttons-found {
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+            padding: 0.6rem 0.75rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-header-admin h1 {
+            font-size: 1.5rem;
+            gap: 0.5rem;
+        }
+        
+        .page-header-admin h1 i {
+            font-size: 1.5rem;
+        }
+        
+        .page-header-admin p {
+            font-size: 0.95rem;
+        }
+        
+        .table-header h2 {
+            font-size: 1.1rem;
+        }
+        
+        .found-persons-table th {
+            font-size: 0.75rem;
+            padding: 0.6rem 0.25rem;
+        }
+        
+        .found-persons-table td {
+            padding: 0.6rem 0.25rem;
+            font-size: 0.8rem;
+        }
+        
+        .found-photo img,
+        .no-photo-found {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+        }
+        
+        .action-buttons-found {
+            gap: 0.3rem;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 0.5rem;
+            font-size: 0.7rem;
+            gap: 0.3rem;
+        }
+        
+        .btn-action i {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header - MATCHES ADMIN DASHBOARD STYLE -->
+<section class="page-header-admin">
+    <div class="container">
+        <h1><i class="fas fa-search"></i> Found Person Reports</h1>
+        <p>Manage found person reports and match confirmations</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="all-found-section">
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-header">
+                <h2><i class="fas fa-filter"></i> Filters</h2>
+            </div>
+            
+            <form method="GET" class="filters-grid" style="margin-bottom: 1rem;">
+                <div class="filter-group">
+                    <label for="status"><i class="fas fa-list"></i> Match Status</label>
+                    <select id="status" name="status" onchange="this.form.submit()">
+                        <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Status</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending Match</option>
+                        <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed Match</option>
+                        <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected Match</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="search"><i class="fas fa-search"></i> Search by Finder</label>
+                    <input type="text" id="search" name="search" value="{{ search_query or '' }}" placeholder="Enter finder name or email..." onchange="this.form.submit()">
+                </div>
+            </form>
+            
+            <!-- Stats -->
+            <div class="filter-stats">
+                <div class="filter-stat">
+                    <strong>{{ counts.all }}</strong> Total Reports
+                </div>
+                <div class="filter-stat">
+                    <strong>{{ counts.pending }}</strong> Pending Match
+                </div>
+                <div class="filter-stat">
+                    <strong>{{ counts.confirmed }}</strong> Confirmed
+                </div>
+                <div class="filter-stat">
+                    <strong>{{ counts.rejected }}</strong> Rejected
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Table -->
+        <div class="found-table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-table"></i> Found Person Records</h2>
+            </div>
+            
+            {% if found_persons %}
+                <table class="found-persons-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Photo</th>
+                            <th>Finder Details</th>
+                            <th>Age & Gender</th>
+                            <th>Found Location</th>
+                            <th>Found Date</th>
+                            <th>Match Status</th>
+                            <th>Matched To</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for found in found_persons %}
+                        <tr data-found-id="{{ found.id }}">
+                            <td><strong>#{{ found.id }}</strong></td>
+                            
+                            <td>
+                                {% if found.photo_paths %}
+                                    {% set photos = found.photo_paths.split(',') %}
+                                    <div class="found-photo">
+                                        <img src="{{ url_for('static', filename=photos[0]) }}" alt="Found person">
+                                    </div>
+                                {% else %}
+                                    <div class="no-photo-found"><i class="fas fa-user"></i></div>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <div><strong>{{ found.finder_name }}</strong></div>
+                                <div style="font-size: 0.9rem; color: #718096;"><i class="fas fa-phone"></i> {{ found.finder_phone }}</div>
+                                {% if found.finder_email %}
+                                <div style="font-size: 0.9rem; color: #718096;"><i class="fas fa-envelope"></i> {{ found.finder_email[:25] }}</div>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <strong>~{{ found.approx_age or 'N/A' }} years</strong><br>
+                                <small style="color: #718096;">{{ (found.approx_gender or 'Unknown')|title }}</small>
+                            </td>
+                            
+                            <td>
+                                <i class="fas fa-map-marker-alt" style="color: #667eea; margin-right: 0.4rem;"></i>
+                                <span>{{ found.found_location[:30] }}{% if found.found_location|length > 30 %}...{% endif %}</span>
+                            </td>
+                            
+                            <td>
+                                <div>{{ found.found_date.strftime('%b %d, %Y') if found.found_date else 'N/A' }}</div>
+                                {% if found.found_time %}
+                                <small style="color: #718096;">{{ found.found_time.strftime('%H:%M') }}</small>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <span class="match-status-badge status-{{ found.match_status }}">
+                                    {% if found.match_status == 'pending' %}
+                                        <i class="fas fa-hourglass-half"></i> Pending
+                                    {% elif found.match_status == 'confirmed' %}
+                                        <i class="fas fa-check"></i> Confirmed
+                                    {% else %}
+                                        <i class="fas fa-times"></i> Rejected
+                                    {% endif %}
+                                </span>
+                            </td>
+                            
+                            <td>
+                                {% if found.related_missing_person %}
+                                    <div>
+                                        <strong>{{ found.related_missing_person.full_name }}</strong>
+                                    </div>
+                                    {% if found.match_confidence %}
+                                    <div style="font-size: 0.9rem; color: #718096;">
+                                        <small>{{ "%.1f"|format(found.match_confidence) }}% match</small>
+                                    </div>
+                                    {% endif %}
+                                {% else %}
+                                    <span style="color: #a0aec0;">No match</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <div class="action-buttons-found">
+                                    <button class="btn-action btn-view" onclick="viewFoundDetails({{ found.id }})" title="View Details">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    
+                                    {% if found.match_status == 'pending' and found.related_missing_person %}
+                                    <button class="btn-action btn-confirm" onclick="confirmMatch({{ found.id }})" title="Confirm Match">
+                                        <i class="fas fa-check"></i> Confirm
+                                    </button>
+                                    
+                                    <button class="btn-action btn-reject" onclick="rejectMatch({{ found.id }})" title="Reject Match">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                    {% endif %}
+                                    
+                                    <button class="btn-action btn-delete" onclick="deleteFound({{ found.id }}, '{{ found.finder_name }}')" title="Delete Report">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">
+                    <i class="fas fa-inbox"></i>
+                    <p>No found person reports found</p>
+                    <button class="btn btn-primary" onclick="location.href='{{ url_for('admin_all_found') }}'">View All Reports</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+<script>
+    function viewFoundDetails(foundId) {
+        alert('Detailed view for found person #' + foundId + ' (coming soon)');
+    }
+    
+    function confirmMatch(foundId) {
+        if (confirm('Confirm this match?')) {
+            fetch(`/api/admin/found/${foundId}/confirm-match`, {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Match confirmed!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+    
+    function rejectMatch(foundId) {
+        if (confirm('Reject this match?')) {
+            fetch(`/api/admin/found/${foundId}/reject-match`, {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Match rejected!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+    
+    function deleteFound(foundId, finderName) {
+        if (confirm(`Delete report from ${finderName}? This action cannot be undone.`)) {
+            fetch(`/api/admin/delete-found/${foundId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Report deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+</script>
+{% endblock %}

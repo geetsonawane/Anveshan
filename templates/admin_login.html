@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_login.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="admin-login-section">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Anveshan Logo" class="login-logo">
+                <h1>Admin Portal</h1>
+                <p>Sign in to access the administration dashboard</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form class="login-form" id="admin-login-form" method="POST" action="{{ url_for('admin_login') }}">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input" required autocomplete="username">
+                    <div class="error-message" id="username-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password">
+                    <div class="error-message" id="password-error"></div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me" name="remember_me">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                    <div class="btn-loading" id="btn-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+            </form>
+                
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Secure admin access. Unauthorized attempts are prohibited.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/admin_login.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+<style>
+    /* Enhanced Dashboard Header */
+    .page-header.admin-header h1 {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: slideInLeft 0.6s ease-out;
+    }
+    
+    .page-header.admin-header h1 i {
+        animation: pulse 2s ease-in-out infinite;
+        font-size: 2.5rem;
+    }
+    
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-header admin-header">
+    <div class="container">
+        <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
+        <p>Manage missing person cases, community reports, and system analytics</p>
+    </div>
+</section>
+
+<section class="admin-dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Stats Overview -->
+            <div class="dashboard-card stats-overview">
+                <h2 style="color: #2d3748; margin-bottom: 1.5rem; font-size: 1.4rem;">
+                    <i class="fas fa-bar-chart-o" style="color: #667eea; margin-right: 0.75rem;"></i>
+                    System Overview
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <i class="fas fa-exclamation-circle stat-icon" style="color: #667eea;"></i>
+                        <div class="stat-content">
+                            <span class="stat-value">{{ stats.active_cases }}</span>
+                            <span class="stat-label">Active Cases</span>
+                            <span class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> Current active cases
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-check-circle stat-icon" style="color: #38ef7d;"></i>
+                        <div class="stat-content">
+                            <span class="stat-value">{{ stats.resolved_today }}</span>
+                            <span class="stat-label">Resolved Today</span>
+                            <span class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> Cases resolved
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-users stat-icon" style="color: #00f2fe;"></i>
+                        <div class="stat-content">
+                            <span class="stat-value">{{ stats.total_reports }}</span>
+                            <span class="stat-label">Community Reports</span>
+                            <span class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> Found persons
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-hourglass-half stat-icon" style="color: #fca311;"></i>
+                        <div class="stat-content">
+                            <span class="stat-value">{{ stats.pending_matches }}</span>
+                            <span class="stat-label">Pending Matches</span>
+                            <span class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> Requires verification
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="{{ url_for('admin_all_cases') }}" class="btn btn-primary">
+                        <i class="fas fa-folder-open"></i> All Cases
+                    </a>
+                    <a href="{{ url_for('admin_all_found') }}" class="btn btn-info">
+                        <i class="fas fa-search-location"></i> Found Persons
+                    </a>
+                    <a href="{{ url_for('admin_contacts') }}" class="btn btn-secondary">
+                        <i class="fas fa-comments"></i> Messages
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Recent Cases -->
+            <div class="dashboard-card recent-cases full-width">
+                <div class="card-header">
+                    <h2><i class="fas fa-list-ul"></i> Recent Missing Person Cases</h2>
+                    <a href="{{ url_for('admin_all_cases') }}" class="btn-text" style="font-size: 0.95rem;">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="cases-table-wrapper">
+                    {% if recent_cases %}
+                        <table class="cases-table">
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th>Name & Details</th>
+                                    <th>Age</th>
+                                    <th>Missing Since</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for case in recent_cases %}
+                                <tr class="case-row" data-case-id="{{ case.id }}">
+                                    <td class="case-photo">
+                                        {% if case.photo_paths %}
+                                            <img src="{{ url_for('static', filename=case.photo_paths.split(',')[0]) }}" alt="{{ case.full_name }}">
+                                        {% else %}
+                                            <div class="no-photo"><i class="fas fa-user"></i></div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="case-details">
+                                        <div class="case-name">{{ case.full_name }}</div>
+                                        <div class="case-category">
+                                            <span class="badge badge-{{ case.category }}">{{ case.category|title }}</span>
+                                            {% if case.category == 'child' %}
+                                                <span class="badge badge-urgent">URGENT</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if case.distinguishing_features %}
+                                        <div class="case-features-small">{{ case.distinguishing_features[:80] }}{% if case.distinguishing_features|length > 80 %}...{% endif %}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="case-age">{{ case.age }} years</td>
+                                    <td class="case-date">
+                                        <div class="date-info">
+                                            <div>{{ case.last_seen_date.strftime('%b %d, %Y') if case.last_seen_date else 'N/A' }}</div>
+                                            <div class="time-elapsed">{{ case.get_time_missing() }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="case-location">
+                                        <i class="fas fa-map-marker-alt"></i> {{ case.last_seen_location[:30] }}{% if case.last_seen_location|length > 30 %}...{% endif %}
+                                    </td>
+                                    <td class="case-status">
+                                        <span class="status-badge {% if case.status == 'resolved' %}resolved{% elif case.status == 'active' %}active{% else %}closed{% endif %}">
+                                            <i class="fas fa-circle"></i> {{ case.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="no-data">
+                            <i class="fas fa-inbox"></i>
+                            <p>No cases reported yet</p>
+                            <a href="{{ url_for('report_missing') }}" class="btn btn-primary">Report Missing Person</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Match Verification Queue
+            <div class="dashboard-card verification-queue">
+                <div class="card-header">
+                    <h2>Match Verification Queue</h2>
+                    <span class="queue-count">{{ pending_verifications|length }} pending</span>
+                </div>
+                <div class="verification-list">
+                    {% if pending_verifications %}
+                        {% for verification in pending_verifications %}
+                        <div class="verification-item">
+                            <div class="match-images">
+                                <div class="image-pair">
+                                    {% if verification.photo_paths %}
+                                        <img src="{{ url_for('static', filename=verification.photo_paths.split(',')[0]) }}" alt="Found Person">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/missing-person.jpg') }}" alt="Found Person">
+                                    {% endif %}
+                                    {% if verification.matched_missing_person and verification.matched_missing_person.photo_paths %}
+                                        <img src="{{ url_for('static', filename=verification.matched_missing_person.photo_paths.split(',')[0]) }}" alt="Missing Person">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/found-person.jpg') }}" alt="Missing Person">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="match-info">
+                                <h3>Potential Match{% if verification.matched_missing_person %}: {{ verification.matched_missing_person.full_name }}{% endif %}</h3>
+                                <p>Confidence Score: <strong>{{ verification.match_confidence or 'N/A' }}%</strong></p>
+                                <p>Reported by: {{ verification.finder_name or 'Anonymous' }}</p>
+                                <p>Location: {{ verification.found_location }}</p>
+                            </div>
+                            <div class="match-actions">
+                                <button class="btn btn-success" onclick="confirmMatch({{ verification.id }})">Confirm Match</button>
+                                <button class="btn btn-danger" onclick="rejectMatch({{ verification.id }})">Reject</button>
+                                <button class="btn btn-outline" onclick="viewMatchDetails({{ verification.id }})">More Info</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No pending verifications</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div> -->
+            
+            <!-- System Analytics -->
+            <div class="dashboard-card analytics-section full-width">
+                <div class="card-header analytics-header">
+                    <h2><i class="fas fa-chart-bar"></i> System Analytics</h2>
+                    <div class="analytics-controls">
+                        <label for="analyticsperiod">Time Period:</label>
+                        <select id="analyticsperiod" class="period-filter">
+                            <option value="7d">Last 7 Days</option>
+                            <option value="30d" selected>Last 30 Days</option>
+                            <option value="90d">Last 3 Months</option>
+                            <option value="1y">Last Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <!-- Chart 1: Case Distribution by Category -->
+                    <div class="chart-card">
+                        <div class="chart-title">Case Distribution by Category</div>
+                        <div class="chart-wrapper">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Case Distribution by Gender -->
+                    <div class="chart-card">
+                        <div class="chart-title">Gender Distribution</div>
+                        <div class="chart-wrapper">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Missing vs Found Reports -->
+                    <div class="chart-card">
+                        <div class="chart-title">Missing vs Found Reports</div>
+                        <div class="chart-wrapper">
+                            <canvas id="missingVsFoundChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 4: Match Success Rate -->
+                    <div class="chart-card">
+                        <div class="chart-title">Match Verification Status</div>
+                        <div class="chart-wrapper">
+                            <canvas id="matchSuccessChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 5: Monthly Trend (Full Width) -->
+                    <div class="chart-card full-width">
+                        <div class="chart-title">Monthly Report Trends</div>
+                        <div class="chart-wrapper">
+                            <canvas id="monthlyTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 6: Resolution Rate Over Time (Full Width) -->
+                    <div class="chart-card full-width">
+                        <div class="chart-title">Case Resolution Progress</div>
+                        <div class="chart-wrapper">
+                            <canvas id="resolutionRateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

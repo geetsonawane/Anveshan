@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>Get in touch with our team for support, partnerships, or general inquiries</p>
+    </div>
+</section>
+
+<section class="contact-section">
+    <div class="container">
+        <div class="contact-content">
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p>We're here to help you. Whether you need support, want to partner with us, or have general questions, our team is ready to assist you.</p>
+                
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Visit Us</h4>
+                            <p>123 Help Street<br>City, Country 12345</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Call Us</h4>
+                            <p>+1 (234) 567-8900<br>Emergency: 911</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email Us</h4>
+                            <p>help@anveshan.org<br>support@anveshan.org</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Office Hours</h4>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Emergency Support: 24/7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="emergency-contact">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Emergency Contact</h3>
+                    <p>For immediate assistance with missing persons, please contact emergency services first.</p>
+                    <div class="emergency-buttons">
+                        <button class="btn btn-emergency" onclick="callEmergency()">
+                            <i class="fas fa-phone"></i> Call 911
+                        </button>
+                        <button class="btn btn-outline" onclick="contactPolice()">
+                            <i class="fas fa-shield-alt"></i> Local Police
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-container">
+                <form class="contact-form" id="contact-form">
+                    <h3>Send us a Message</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="contact-name" class="required-field">Your Name</label>
+                            <input type="text" id="contact-name" name="contact-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email" class="required-field">Email Address</label>
+                            <input type="email" id="contact-email" name="contact-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone">Phone Number</label>
+                            <input type="tel" id="contact-phone" name="contact-phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-subject">Subject</label>
+                            <select id="contact-subject" name="contact-subject">
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="support">Technical Support</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="volunteer">Volunteer Opportunity</option>
+                                <option value="media">Media Inquiry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="contact-message" class="required-field">Message</label>
+                        <textarea id="contact-message" name="contact-message" rows="6" placeholder="Please describe your inquiry in detail..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                        <button type="reset" class="btn btn-outline">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h4>How quickly does Anveshan respond to missing person reports?</h4>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We prioritize all missing person reports and typically initiate search efforts within 15-30 minutes of receiving a complete report. Our AI system immediately begins scanning community reports and alerts nearby volunteers.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h4>Is my personal information secure?</h4>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, we take data privacy very seriously. All personal information is encrypted and stored securely. We only share necessary information with authorized volunteers and law enforcement agencies involved in search efforts.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h4>How accurate is the facial recognition technology?</h4>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Our AI system achieves 92% accuracy in matching faces under optimal conditions. All matches are verified by both our system administrators and, when possible, family members before any reunification actions are taken.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h4>Can I volunteer to help with search efforts?</h4>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! We welcome community volunteers. You can sign up through our website and will receive training on how to effectively participate in search efforts while maintaining safety protocols.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/about_contact.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,691 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Messages - Admin - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+<style>
+    .contacts-page {
+        padding: 2rem 0;
+        background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        min-height: calc(100vh - 200px);
+    }
+    
+    .page-header-contacts {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .page-header-contacts h1 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 2rem;
+    }
+    
+    .filters-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .filter-group label {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.9rem;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+    
+    .filter-group select:focus,
+    .filter-group input:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+    
+    .filter-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 1rem;
+        background: #f7fafc;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    
+    .filter-stat {
+        padding: 0.5rem 1rem;
+        background: white;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        border: 2px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .filter-stat strong {
+        color: #667eea;
+    }
+    
+    .contacts-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .contacts-header {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .contacts-list {
+        padding: 1.5rem;
+    }
+    
+    .contact-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .contact-item.new {
+        border-left-color: #f59e0b;
+        background: #fffbeb;
+    }
+    
+    .contact-item.in_progress {
+        border-left-color: #3b82f6;
+        background: #eff6ff;
+    }
+    
+    .contact-item.resolved {
+        border-left-color: #10b981;
+        background: #f0fdf4;
+    }
+    
+    .contact-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-info h3 {
+        margin: 0 0 0.5rem 0;
+        color: #1a202c;
+        font-size: 1.2rem;
+    }
+    
+    .contact-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-badge.new {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .status-badge.in_progress {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .status-badge.resolved {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .contact-subject {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        background: #e0e7ff;
+        color: #4338ca;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-message {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        color: #374151;
+        line-height: 1.6;
+    }
+    
+    .contact-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-mark-progress {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .btn-mark-progress:hover {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .btn-mark-resolved {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .btn-mark-resolved:hover {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-delete {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .btn-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+    
+    .no-contacts {
+        text-align: center;
+        padding: 3rem;
+        color: #64748b;
+    }
+    
+    .no-contacts i {
+        font-size: 4rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-header-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .contact-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .contact-actions {
+            flex-direction: column;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    /* ========================================
+       Contact Info Banner at Top
+       ======================================== */
+    
+    .contact-info-banner {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        padding: 2rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        margin-bottom: 0;
+        animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .contact-info-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.05) 10px,
+            rgba(255, 255, 255, 0.05) 20px
+        );
+        animation: moveStripes 20s linear infinite;
+    }
+    
+    @keyframes moveStripes {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+    }
+    
+    .contact-info-banner-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .contact-info-banner h2 {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+        animation: pulseText 3s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    @keyframes pulseText {
+        0%, 100% {
+            transform: scale(1);
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+        }
+        50% {
+            transform: scale(1.03);
+            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+    }
+    
+    .contact-info-banner h2 i {
+        font-size: 2rem;
+        animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    
+    .contact-info-banner-subtitle {
+        margin-top: 0.75rem;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 300;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .contact-info-banner-divider {
+        width: 100px;
+        height: 4px;
+        background: white;
+        margin: 1.5rem auto;
+        border-radius: 2px;
+        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        animation: expandWidth 2s ease-in-out infinite;
+    }
+    
+    @keyframes expandWidth {
+        0%, 100% { width: 100px; }
+        50% { width: 150px; }
+    }
+    
+    @media (max-width: 768px) {
+        .contact-info-banner h2 {
+            font-size: 1.6rem;
+            letter-spacing: 1.5px;
+        }
+        
+        .contact-info-banner-subtitle {
+            font-size: 0.95rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .contact-info-banner {
+            padding: 1.5rem 0;
+        }
+        
+        .contact-info-banner h2 {
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
+        
+        .contact-info-banner h2 i {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Contact Information Banner -->
+<div class="contact-info-banner">
+    <div class="container">
+        <div class="contact-info-banner-content">
+            <h2>
+                <i class="fas fa-envelope-open-text"></i>
+                CONTACT MESSAGES MANAGEMENT
+                <i class="fas fa-envelope-open-text"></i>
+            </h2>
+            <div class="contact-info-banner-divider"></div>
+            <p class="contact-info-banner-subtitle">All User Contact Form Submissions & Inquiries</p>
+        </div>
+    </div>
+</div>
+
+<div class="page-header-contacts">
+    <div class="container">
+        <h1><i class="fas fa-envelope"></i> Contact Messages</h1>
+        <p>Manage and respond to contact form submissions</p>
+    </div>
+</div>
+
+<section class="contacts-page">
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h2><i class="fas fa-filter"></i> Filter Messages</h2>
+            
+            <form method="GET" action="{{ url_for('admin_contacts') }}">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label><i class="fas fa-list"></i> Status</label>
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Status</option>
+                            <option value="new" {% if status_filter == 'new' %}selected{% endif %}>New</option>
+                            <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-tag"></i> Subject</label>
+                        <select name="subject" onchange="this.form.submit()">
+                            <option value="all" {% if subject_filter == 'all' %}selected{% endif %}>All Subjects</option>
+                            <option value="general" {% if subject_filter == 'general' %}selected{% endif %}>General Inquiry</option>
+                            <option value="support" {% if subject_filter == 'support' %}selected{% endif %}>Technical Support</option>
+                            <option value="partnership" {% if subject_filter == 'partnership' %}selected{% endif %}>Partnership</option>
+                            <option value="volunteer" {% if subject_filter == 'volunteer' %}selected{% endif %}>Volunteer</option>
+                            <option value="media" {% if subject_filter == 'media' %}selected{% endif %}>Media</option>
+                            <option value="other" {% if subject_filter == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-search"></i> Search</label>
+                        <input type="text" name="search" value="{{ search_query }}" placeholder="Search name, email, message...">
+                    </div>
+                    
+                    <div class="filter-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="filter-stats">
+                <div class="filter-stat"><strong>{{ counts.all }}</strong> Total</div>
+                <div class="filter-stat"><strong>{{ counts.new }}</strong> New</div>
+                <div class="filter-stat"><strong>{{ counts.in_progress }}</strong> In Progress</div>
+                <div class="filter-stat"><strong>{{ counts.resolved }}</strong> Resolved</div>
+            </div>
+        </div>
+        
+        <!-- Contacts List -->
+        <div class="contacts-container">
+            <div class="contacts-header">
+                <h2><i class="fas fa-inbox"></i> {{ contacts|length }} Messages</h2>
+            </div>
+            
+            <div class="contacts-list">
+                {% if contacts %}
+                    {% for contact in contacts %}
+                    <div class="contact-item {{ contact.status }}" data-contact-id="{{ contact.id }}">
+                        <div class="contact-header-row">
+                            <div class="contact-info">
+                                <h3>{{ contact.name }}</h3>
+                                <div class="contact-meta">
+                                    <span><i class="fas fa-envelope"></i> {{ contact.email }}</span>
+                                    {% if contact.phone %}
+                                    <span><i class="fas fa-phone"></i> {{ contact.phone }}</span>
+                                    {% endif %}
+                                    <span><i class="fas fa-clock"></i> {{ contact.created_at.strftime('%b %d, %Y at %I:%M %p') }}</span>
+                                </div>
+                                {% if contact.subject %}
+                                <div class="contact-subject">
+                                    <i class="fas fa-tag"></i> {{ contact.subject|title }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <span class="status-badge {{ contact.status }}">
+                                {{ contact.status.replace('_', ' ')|title }}
+                            </span>
+                        </div>
+                        
+                        <div class="contact-message">
+                            {{ contact.message }}
+                        </div>
+                        
+                        <div class="contact-actions">
+                            {% if contact.status != 'in_progress' %}
+                            <button class="btn-action btn-mark-progress" onclick="updateStatus({{ contact.id }}, 'in_progress')">
+                                <i class="fas fa-play"></i> Mark In Progress
+                            </button>
+                            {% endif %}
+                            
+                            {% if contact.status != 'resolved' %}
+                            <button class="btn-action btn-mark-resolved" onclick="updateStatus({{ contact.id }}, 'resolved')">
+                                <i class="fas fa-check"></i> Mark Resolved
+                            </button>
+                            {% endif %}
+                            
+                            <button class="btn-action btn-delete" onclick="deleteContact({{ contact.id }}, '{{ contact.name }}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-contacts">
+                        <i class="fas fa-inbox"></i>
+                        <p>No contact messages found</p>
+                        <button class="btn btn-secondary" onclick="window.location.reload()">Refresh</button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+function updateStatus(contactId, newStatus) {
+    const statusText = newStatus.replace('_', ' ');
+    
+    if (!confirm(`Mark this message as "${statusText}"?`)) {
+        return;
+    }
+    
+    fetch(`/api/admin/contact/${contactId}/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showNotification(data.message || 'Failed to update status', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred', 'error');
+    });
+}
+
+function deleteContact(contactId, contactName) {
+    if (!confirm(`Are you sure you want to delete the message from "${contactName}"?\n\nThis action cannot be undone.`)) {
+        return;
+    }
+    
+    const doubleConfirm = prompt('Type "DELETE" to confirm deletion:');
+    if (doubleConfirm !== 'DELETE') {
+        showNotification('Deletion cancelled', 'info');
+        return;
+    }
+    
+    fetch(`/api/admin/contact/${contactId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            
+            // Animate removal
+            const item = document.querySelector(`[data-contact-id="${contactId}"]`);
+            if (item) {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    item.remove();
+                    if (document.querySelectorAll('.contact-item').length === 0) {
+                        window.location.reload();
+                    }
+                }, 300);
+            }
+        } else {
+            showNotification(data.message || 'Failed to delete contact', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred', 'error');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

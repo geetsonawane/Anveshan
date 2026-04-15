@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}AI Face Search & Match - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search_results.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>AI-Powered Face Search & Match</h1>
+        <p>Upload a photo or search by location to find missing persons using FaceNet</p>
+    </div>
+</section>
+
+<section class="search-section">
+    <div class="container">
+        <div class="search-container">
+            <!-- AI Face Search - Single Search Method -->
+            <div class="ai-badge" style="margin-bottom: 20px;">
+                <i class="fas fa-brain"></i>
+                <span> FaceNet - Facial Recognition</span>
+            </div>
+            
+            <div class="face-search-container">
+                    <div class="upload-section">
+                        <div class="upload-area" id="search-upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Upload Photo for AI Face Matching</h3>
+                            <p>Our FaceNet model will search through the database for matches</p>
+                            <p class="upload-hint">Supported: JPG, PNG (Max 5MB)</p>
+                            <input type="file" id="search-photo-upload" accept="image/*">
+                        </div>
+                        <div id="search-photo-preview" class="photo-preview" style="display: none;">
+                            <div class="preview-image-container">
+                                <img id="preview-image" src="" alt="Preview">
+                                <button class="btn-remove" onclick="removeSearchPhoto()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <!-- Location Status -->
+                            <div id="location-status" style="margin-top: 20px; padding: 15px; background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 8px; display: none;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                    <i class="fas fa-spinner" id="location-spinner" style="color: #3b82f6; animation: spin 1s linear infinite; display: none;"></i>
+                                    <i class="fas fa-check-circle" id="location-check" style="color: #10b981; display: none; font-size: 18px;"></i>
+                                    <i class="fas fa-exclamation-circle" id="location-error" style="color: #ef4444; display: none; font-size: 18px;"></i>
+                                    <span id="location-text" style="color: #1e40af; font-weight: 500;">Requesting GPS location...</span>
+                                </div>
+                                <div id="location-coords" style="font-size: 13px; color: #0c4a6e; margin-top: 8px; display: none;">
+                                    📍 <strong>Latitude:</strong> <span id="latitude-display"></span><br>
+                                    📍 <strong>Longitude:</strong> <span id="longitude-display"></span>
+                                </div>
+                            </div>
+                            <button id="run-face-match-btn" class="btn btn-success" style="margin-top: 20px; opacity: 0.5; cursor: not-allowed;" disabled>
+                                <i class="fas fa-search"></i> Run AI Face Match (Awaiting Location)
+                            </button>
+                            <div id="matching-progress" class="matching-progress" style="display: none;">
+                                <div class="spinner"></div>
+                                <p>Analyzing face with FaceNet...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="results-section" id="search-results" style="display: none;">
+    <div class="container">
+        <div class="results-header">
+            <h3>Search Results</h3>
+            <div class="results-count">Found <span id="results-count">0</span> results</div>
+        </div>
+        <div class="results-grid" id="results-grid">
+            <!-- Results will be populated by JavaScript when search is performed -->
+        </div>
+    </div>
+</section>
+
+<!-- Facial Recognition Info -->
+<section class="ai-info">
+    <div class="container">
+        <div class="ai-content">
+            <div class="ai-text">
+                <h2>AI-Powered Facial Recognition</h2>
+                <p>Anveshan uses DeepFace with FaceNet512 pretrained model to accurately match photos of found individuals with missing person reports. The system achieves perfect discrimination between different people.</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> 93% accuracy for same person matches</li>
+                    <li><i class="fas fa-check-circle"></i> 0.3%-35% similarity for different people</li>
+                    <li><i class="fas fa-check-circle"></i> Real-time matching alerts via email</li>
+                    <li><i class="fas fa-check-circle"></i> No overfitting - proven pretrained model</li>
+                </ul>
+            </div>
+            <div class="ai-visual">
+                <div class="face-comparison">
+                    <div class="face-image">
+                        <img src="{{ url_for('static', filename='images/madhura2.jpeg') }}" alt="Missing Person Photo">
+                        <span>Missing Person</span>
+                    </div>
+                    <div class="comparison-arrow">
+                        <i class="fas fa-arrows-alt-h"></i>
+                    </div>
+                    <div class="face-image">
+                        <img src="{{ url_for('static', filename='images/madhura3.jpeg') }}" alt="Found Person Photo">
+                        <span>Found Person</span>
+                    </div>
+                </div>
+                <div class="match-score">
+                    <div class="score-circle">
+                        <span>92%</span>
+                    </div>
+                    <p>Match Confidence</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<!-- Google Maps JavaScript API -->
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+</script>
+<script src="{{ url_for('static', filename='js/search_results.js') }}"></script>
+{% endblock %}

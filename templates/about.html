@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>About Anveshan</h1>
+        <p>Learn about our mission, technology, and the team behind Anveshan</p>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>Our Mission</h2>
+                <p>Anveshan, which means "discovery" or "search" in Sanskrit, was founded with a simple yet powerful mission: to leverage technology and community power to quickly locate missing children and Alzheimer's patients.</p>
+                <p>Every year, thousands of families experience the trauma of having a loved one go missing. Traditional search methods are often slow and fragmented. Anveshan addresses this critical gap by creating a unified digital platform that connects families, community members, and authorities in real-time.</p>
+                
+                <h2>Our Technology</h2>
+                <p>At the heart of Anveshan is our advanced AI-powered recognition system:</p>
+                <ul>
+                    <li><strong>MTCNN Detection:</strong> Accurate face detection even in challenging conditions</li>
+                    <li><strong>FaceNet Embeddings:</strong> Creates unique facial signatures for precise matching</li>
+                    <li><strong>Cosine Similarity Matching:</strong> Measures similarity between facial embeddings with high precision</li>
+                    <li><strong>Real-time Alert System:</strong> Instant notifications when potential matches are found</li>
+                </ul>
+                
+                <h2>Our Impact</h2>
+                <div class="impact-stats">
+                    <div class="impact-item">
+                        <div class="impact-number">1,250+</div>
+                        <div class="impact-label">Families Reunited</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">48</div>
+                        <div class="impact-label">Average Recovery Time (Hours)</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-number">92%</div>
+                        <div class="impact-label">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-image">
+                <img src="{{ url_for('static', filename='images/about2.jpg') }}" alt="About Anveshan">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+    <div class="container">
+        <h2 class="section-title">Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Anushka Patil</h3>
+                <p class="member-role">Founder & CEO</p>
+                <p>Computer Vision expert with 10+ years in AI research</p>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Geetkumar Sonawane</h3>
+                <p class="member-role">CTO</p>
+                <p>Full-stack developer and system architect</p>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Shweta Talware</h3>
+                <p class="member-role">Community Manager</p>
+                <p>Social work background with focus on family services</p>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Madhura Badgujar</h3>
+                <p class="member-role">AI Research Lead</p>
+                <p>PhD in Machine Learning and Pattern Recognition</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Partners Section -->
+<section class="partners-section">
+    <div class="container">
+        <h2 class="section-title">Our Partners</h2>
+        <div class="partners-grid">
+            <div class="partner-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Local Police Departments</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>Alzheimer's Association</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-child"></i>
+                <span>Missing Children Organizations</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-university"></i>
+                <span>Community Centers</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/about_contact.js') }}"></script>
+{% endblock %}

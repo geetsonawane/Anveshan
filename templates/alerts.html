@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts & Notifications - Anveshan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/alerts.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Alerts & Notifications</h1>
+        <p>Stay informed about missing persons in your area and receive match alerts</p>
+    </div>
+</section>
+
+<section class="alerts-section">
+    <div class="container">
+        <div class="alerts-container">
+            <div class="alerts-sidebar">
+                <div class="alerts-filters">
+                    <h3>Filter Alerts</h3>
+                    <div class="filter-options">
+                        <div class="filter-option active" data-filter="all">
+                            <i class="fas fa-bell"></i>
+                            <span>All Alerts</span>
+                            <span class="filter-count">12</span>
+                        </div>
+                        <div class="filter-option" data-filter="emergency">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Emergency</span>
+                            <span class="filter-count">3</span>
+                        </div>
+                        <div class="filter-option" data-filter="match">
+                            <i class="fas fa-user-check"></i>
+                            <span>Potential Matches</span>
+                            <span class="filter-count">5</span>
+                        </div>
+                        <div class="filter-option" data-filter="sighting">
+                            <i class="fas fa-eye"></i>
+                            <span>Recent Sightings</span>
+                            <span class="filter-count">8</span>
+                        </div>
+                        <div class="filter-option" data-filter="resolved">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Resolved Cases</span>
+                            <span class="filter-count">4</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-subscription">
+                    <h3>Alert Preferences</h3>
+                    <div class="preference-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Email Notifications</span>
+                    </div>
+                    <div class="preference-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>SMS Alerts</span>
+                    </div>
+                    <div class="preference-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Push Notifications</span>
+                    </div>
+                    <div class="preference-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Emergency Alerts Only</span>
+                    </div>
+                </div>
+            </div>
+            <div class="alerts-main">
+                <div class="alerts-header">
+                    <h2>Recent Alerts</h2>
+                    <button class="btn btn-outline mark-all-read">
+                        <i class="fas fa-check-double"></i> Mark All as Read
+                    </button>
+                </div>
+                <div class="alerts-list" id="alerts-list">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Emergency Alert Banner -->
+<div class="emergency-banner">
+    <div class="container">
+        <div class="banner-content">
+            <div class="banner-icon">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="banner-text">
+                <h3>Amber Alert Active</h3>
+                <p>There is an active Amber Alert in your area. Stay vigilant and report any suspicious activity.</p>
+            </div>
+            <button class="btn btn-emergency">View Alert Details</button>
+        </div>
+    </div>
+</div>
+
+<!-- Community Updates -->
+<section class="community-updates">
+    <div class="container">
+        <h2 class="section-title">Community Updates</h2>
+        <div class="updates-grid" id="updates-grid">
+            <!-- Updates will be populated by JavaScript -->
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
+{% endblock %}
